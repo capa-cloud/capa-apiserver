@@ -61,7 +61,6 @@
 
     <modules>
         <module>proxy-rpc</module>
-        <module>proxy-rpc-demo</module>
     </modules>
 
     <properties>

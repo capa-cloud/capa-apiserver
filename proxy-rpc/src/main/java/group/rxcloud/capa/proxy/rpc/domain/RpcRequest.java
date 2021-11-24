@@ -16,11 +16,14 @@
  */
 package group.rxcloud.capa.proxy.rpc.domain;
 
+import java.util.Map;
+
 public class RpcRequest {
 
     private String appId;
     private String methodName;
     private Object requestData;
+    private Map<String, String > metadata;
 
     public String getAppId() {
         return appId;
@@ -44,5 +47,13 @@ public class RpcRequest {
 
     public void setRequestData(Object requestData) {
         this.requestData = requestData;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 }

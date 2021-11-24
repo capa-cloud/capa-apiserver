@@ -20,10 +20,18 @@ import group.rxcloud.capa.proxy.rpc.domain.RpcRequest;
 import group.rxcloud.capa.rpc.CapaRpcClient;
 import org.springframework.stereotype.Component;
 
+/**
+ * The Local2Local rpc invoker.
+ */
 @Component
-public class LocalRpcInvoker extends RpcInvoker {
+public class LocalToLocalRpcInvoker extends RpcInvoker {
 
-    public LocalRpcInvoker(CapaRpcClient client) {
+    /**
+     * Instantiates a new Local rpc invoker.
+     *
+     * @param client the client
+     */
+    public LocalToLocalRpcInvoker(CapaRpcClient client) {
         super(client);
     }
 

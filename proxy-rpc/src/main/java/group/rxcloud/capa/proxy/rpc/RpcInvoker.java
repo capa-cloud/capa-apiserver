@@ -22,67 +22,74 @@ import group.rxcloud.cloudruntimes.domain.core.invocation.HttpExtension;
 import group.rxcloud.cloudruntimes.utils.TypeRef;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The Proxy Rpc invoker.
+ */
 public abstract class RpcInvoker {
 
     private final CapaRpcClient client;
     private final HttpExtension httpType;
 
-    public RpcInvoker(CapaRpcClient client) {
+    /**
+     * Instantiates a new Rpc invoker.
+     *
+     * @param client the client
+     */
+    RpcInvoker(CapaRpcClient client) {
         this.client = Objects.requireNonNull(client);
         this.httpType = HttpExtension.POST;
     }
 
-    public abstract String generateAppId(RpcRequest rpcRequest);
-
-    public abstract String generateMethodName(RpcRequest rpcRequest);
-
-    public abstract Object generateData(RpcRequest rpcRequest);
-
-    public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, Map<String, String> metadata, TypeRef<T> type) {
-        return invoke(appId, methodName, data, metadata, type);
+    /**
+     * Invoke rpc method.
+     *
+     * @param <T>        the type parameter
+     * @param rpcRequest the rpc request
+     * @param type       the type
+     */
+    public <T> Mono<T> invokeMethod(RpcRequest rpcRequest, TypeRef<T> type) {
+        String appId = generateAppId(rpcRequest);
+        String methodName = generateMethodName(rpcRequest);
+        Object data = generateData(rpcRequest);
+        return invokeMethod(appId, methodName, data, rpcRequest.getMetadata(), type);
     }
 
-    public <T> Mono<T> invokeMethod(String appId, String methodName, Object data, TypeRef<T> type) {
-        return invoke(appId, methodName, data, new HashMap<>(2, 1), type);
-    }
+    /**
+     * Generate app id.
+     *
+     * @param rpcRequest the rpc request
+     */
+    protected abstract String generateAppId(RpcRequest rpcRequest);
 
-    public <T> Mono<T> invokeMethod(String appId, String methodName, Map<String, String> metadata, TypeRef<T> type) {
-        return invoke(appId, methodName, null, metadata, type);
-    }
+    /**
+     * Generate method name.
+     *
+     * @param rpcRequest the rpc request
+     */
+    protected abstract String generateMethodName(RpcRequest rpcRequest);
 
-    public Mono<Void> invokeMethod(String appId, String methodName, Object data, Map<String, String> metadata) {
-        return invoke(appId, methodName, data, metadata, TypeRef.VOID);
-    }
+    /**
+     * Generate data object.
+     *
+     * @param rpcRequest the rpc request
+     * @return the object
+     */
+    protected abstract Object generateData(RpcRequest rpcRequest);
 
-    public Mono<Void> invokeMethod(String appId, String methodName, Object data) {
-        return invoke(appId, methodName, data, new HashMap<>(2, 1), TypeRef.VOID);
-    }
-
-    public Mono<Void> invokeMethod(String appId, String methodName, Map<String, String> metadata) {
-        return invoke(appId, methodName, null, metadata, TypeRef.VOID);
-    }
-
-    public Mono<byte[]> invokeMethod(String appId, String methodName, byte[] data, Map<String, String> metadata) {
-        return invoke(appId, methodName, data, metadata, TypeRef.BYTE_ARRAY);
-    }
-
-    public Mono<byte[]> invokeMethod(String appId, String methodName, byte[] data) {
-        return invoke(appId, methodName, data, new HashMap<>(2, 1), TypeRef.BYTE_ARRAY);
-    }
-
-    public Mono<String> invokeMethod(String appId, String methodName, String data, Map<String, String> metadata) {
-        return invoke(appId, methodName, data, metadata, TypeRef.STRING);
-    }
-
-    public Mono<String> invokeMethod(String appId, String methodName, String data) {
-        return invoke(appId, methodName, data, new HashMap<>(2, 1), TypeRef.STRING);
-    }
-
-    private <T> Mono<T> invoke(String appId, String methodName, Object data, Map<String, String> metadata, TypeRef<T> type) {
+    /**
+     * Invoke rpc method.
+     *
+     * @param <T>        the type parameter
+     * @param appId      the app id
+     * @param methodName the method name
+     * @param data       the data
+     * @param metadata   the metadata
+     * @param type       the type
+     */
+    protected <T> Mono<T> invokeMethod(String appId, String methodName, Object data, Map<String, String> metadata, TypeRef<T> type) {
         return client.invokeMethod(appId, methodName, data, httpType, metadata, type);
     }
 }
